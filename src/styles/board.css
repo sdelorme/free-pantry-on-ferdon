@@ -1,0 +1,503 @@
+/* ═══════════════════════════════════════════════════════════════
+   Free Pantry on Ferdon
+   Every colour here was sampled off the physical box: white painted
+   board, hand-painted daisies, navy block lettering with a coloured
+   outline. Nothing in this palette was invented.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --navy: #333c6a;              /* the FREE letters on the box */
+  --ink: #1f2430;
+  --paint: #fdfbf4;             /* white painted board */
+  --muted: #57606f;
+  --hairline: rgba(31, 36, 48, 0.1);
+
+  /* daisy petals */
+  --f-red: #e2434a;
+  --f-pink: #ea69a4;
+  --f-purple: #7c4fa8;
+  --f-lilac: #b48ad6;
+  --f-green: #56b25a;
+  --f-teal: #35aed0;
+  --f-blue: #3f7fd0;
+  --f-orange: #f1892f;
+  --f-yellow: #ffd63c;          /* every daisy centre */
+
+  /* Card fills: the petal colours at paint-wash strength, so 180
+     characters of someone's words stay readable on top of them. */
+  --w-red: #fbdfdf;
+  --w-pink: #fbdeec;
+  --w-orange: #fde8d2;
+  --w-yellow: #fdf2cc;
+  --w-green: #ddf0dc;
+  --w-teal: #d6eef5;
+  --w-blue: #dce8f8;
+  --w-purple: #e6dcf3;
+
+  /* Material elevation, tinted toward the ink rather than pure black.
+     These read properly because the board is light — the dark-board
+     version of this design needed a surface-tint workaround. */
+  --elev-8:
+    0 5px 5px -3px rgba(31, 36, 48, 0.16),
+    0 8px 10px 1px rgba(31, 36, 48, 0.11),
+    0 3px 14px 2px rgba(31, 36, 48, 0.09);
+  --elev-16:
+    0 8px 10px -5px rgba(31, 36, 48, 0.2),
+    0 16px 24px 2px rgba(31, 36, 48, 0.14),
+    0 6px 30px 5px rgba(31, 36, 48, 0.11);
+
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paint);
+  color: var(--ink);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--navy);
+}
+
+/* ─── the board surface ──────────────────────────────────────── */
+
+.board {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Paint tooth plus the faintest plank seams — enough to feel like a
+   painted surface, not enough to register as a texture. */
+.board::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23p)' opacity='.22'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 139px,
+      rgba(31, 36, 48, 0.045) 139px 140px
+    );
+}
+
+.board > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── navigation ─────────────────────────────────────────────── */
+
+.nav {
+  display: flex;
+  gap: 18px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 16px;
+  padding: 18px 22px 0;
+}
+
+.nav a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.nav a:hover,
+.nav a[aria-current='page'] {
+  color: var(--navy);
+  text-decoration: underline;
+}
+
+/* ─── the prompt: the headline is the blank ──────────────────── */
+
+.prompt {
+  padding: 26px 22px 4px;
+}
+
+.prompt-kicker {
+  font-family: 'Patrick Hand', cursive;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  color: var(--f-purple);
+}
+
+.prompt-line {
+  font-family: 'Lilita One', cursive;
+  font-weight: 400;
+  font-size: clamp(52px, 15vw, 62px);
+  line-height: 0.9;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin: 12px 0 0;
+}
+
+/* The box's lettering: navy fill, solid offset outline, a different
+   colour per letter. Eight shadows rather than -webkit-text-stroke
+   because stroke can't be coloured per letter alongside a fill. */
+.prompt-line .ltr {
+  text-shadow:
+    -3px -3px 0 var(--o), 3px -3px 0 var(--o),
+    -3px 3px 0 var(--o), 3px 3px 0 var(--o),
+    0 -3px 0 var(--o), 0 3px 0 var(--o),
+    -3px 0 0 var(--o), 3px 0 0 var(--o);
+}
+
+.prompt-line .ltr:nth-child(1) { --o: var(--f-red); }
+.prompt-line .ltr:nth-child(2) { --o: var(--f-yellow); }
+.prompt-line .ltr:nth-child(3) { --o: var(--f-teal); }
+.prompt-line .ltr:nth-child(4) { --o: var(--f-orange); }
+.prompt-line .ltr:nth-child(5) { --o: var(--f-green); }
+.prompt-line .ltr:nth-child(6) { --o: var(--f-pink); }
+.prompt-line .ltr:nth-child(7) { --o: var(--f-lilac); }
+
+/* The blank drops to its own line on narrow screens. "BECAUSE" sets
+   to roughly 250px at this size, so an inline 112px blank plus the
+   22px gutters does not fit a 390px viewport. Headless Chrome clamps
+   to a 500px minimum and cannot render that case, so this is reasoned
+   from measured glyph widths rather than confirmed in a render —
+   worth checking on a real phone. It also gives the blank room to
+   read as something you write on. */
+.prompt-blank {
+  display: block;
+  width: 72%;
+  height: 0;
+  border-bottom: 7px solid var(--navy);
+  margin-top: 16px;
+}
+
+.prompt-sub {
+  font-size: 14px;
+  line-height: 1.68;
+  color: var(--muted);
+  margin: 22px 0 0;
+  max-width: 33ch;
+  font-weight: 300;
+}
+
+.prompt-sub strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* ─── controls ───────────────────────────────────────────────── */
+
+.controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 24px 22px 8px;
+}
+
+.chip {
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 8px 15px;
+  border-radius: 9px;
+  cursor: pointer;
+  border: 1.5px solid rgba(31, 36, 48, 0.16);
+  background: #fff;
+  color: #4a5365;
+  box-shadow: 0 1px 2px rgba(31, 36, 48, 0.07);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.chip:hover {
+  border-color: rgba(31, 36, 48, 0.34);
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+  box-shadow:
+    0 2px 2px rgba(51, 60, 106, 0.2),
+    0 1px 5px rgba(51, 60, 106, 0.18);
+}
+
+.shuffle {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 15.5px;
+  cursor: pointer;
+  padding: 7px 14px;
+  border-radius: 9px;
+  border: 1.5px dashed var(--f-purple);
+  background: transparent;
+  color: var(--f-purple);
+}
+
+.shuffle:hover {
+  background: rgba(124, 79, 168, 0.07);
+}
+
+/* ─── cards ──────────────────────────────────────────────────── */
+
+.cards {
+  padding: 18px 18px 60px;
+}
+
+.card {
+  position: relative;
+  border-radius: 14px;
+  padding: 20px 18px 14px;
+  break-inside: avoid;
+  box-shadow: var(--elev-8);
+  transition: transform 0.22s var(--ease), box-shadow 0.22s;
+}
+
+.card:hover {
+  box-shadow: var(--elev-16);
+  z-index: 40 !important;
+}
+
+.card-daisy {
+  position: absolute;
+  top: -9px;
+  right: -7px;
+}
+
+.card-quote {
+  font-size: 17px;
+  line-height: 1.46;
+  letter-spacing: -0.009em;
+  margin: 0;
+}
+
+.card-stem {
+  font-weight: 600;
+}
+
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 15px;
+  padding-top: 11px;
+  border-top: 1px solid var(--hairline);
+}
+
+.card-kind {
+  font-family: 'Patrick Hand', cursive;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+}
+
+.card-date {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(31, 36, 48, 0.38);
+}
+
+/* Responses are shown in the language they were written in and never
+   translated, so a non-English card gets a quiet tag rather than any
+   kind of warning. */
+.card-lang {
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgba(31, 36, 48, 0.4);
+  border: 1px solid rgba(31, 36, 48, 0.18);
+  border-radius: 4px;
+  padding: 2px 5px;
+  margin-left: 7px;
+}
+
+.card[data-color='red']    { background: var(--w-red); }
+.card[data-color='pink']   { background: var(--w-pink); }
+.card[data-color='orange'] { background: var(--w-orange); }
+.card[data-color='yellow'] { background: var(--w-yellow); }
+.card[data-color='green']  { background: var(--w-green); }
+.card[data-color='teal']   { background: var(--w-teal); }
+.card[data-color='blue']   { background: var(--w-blue); }
+.card[data-color='purple'] { background: var(--w-purple); }
+
+.card[data-color='red']    .card-kind { color: #b02c33; }
+.card[data-color='pink']   .card-kind { color: #bc4a7f; }
+.card[data-color='orange'] .card-kind { color: #b7651c; }
+.card[data-color='yellow'] .card-kind { color: #917706; }
+.card[data-color='green']  .card-kind { color: #2f7d33; }
+.card[data-color='teal']   .card-kind { color: #1b7794; }
+.card[data-color='blue']   .card-kind { color: #2a5a9c; }
+.card[data-color='purple'] .card-kind { color: #633e8d; }
+
+/* Cards hidden by the filter. Set as an attribute rather than inline
+   style so the filter script stays a one-liner. */
+.card[hidden] {
+  display: none;
+}
+
+/* ─── the pile ───────────────────────────────────────────────────
+   Cards overlap by a few pixels and sit a degree off square, so the
+   board reads as something people keep adding to rather than a feed.
+   The tilt is nth-child so it survives filtering and shuffling without
+   the script needing to know anything about geometry. */
+
+.cards .card {
+  margin-bottom: -8px;
+  width: 94%;
+}
+
+.cards .card:nth-child(even) {
+  margin-left: auto;
+  width: 90%;
+}
+
+.cards .card:nth-child(6n + 1) { transform: rotate(-1.1deg); z-index: 1; }
+.cards .card:nth-child(6n + 2) { transform: rotate(0.9deg);  z-index: 2; }
+.cards .card:nth-child(6n + 3) { transform: rotate(-0.5deg); z-index: 3; }
+.cards .card:nth-child(6n + 4) { transform: rotate(1.3deg);  z-index: 4; }
+.cards .card:nth-child(6n + 5) { transform: rotate(-0.9deg); z-index: 5; }
+.cards .card:nth-child(6n + 6) { transform: rotate(0.4deg);  z-index: 6; }
+
+.cards .card:hover {
+  transform: rotate(0deg) translateY(-4px);
+}
+
+/* ─── prose pages (about, find) ──────────────────────────────── */
+
+.prose {
+  padding: 26px 22px 80px;
+  max-width: 62ch;
+}
+
+.prose p {
+  font-size: 16.5px;
+  line-height: 1.72;
+  color: #3a424f;
+  font-weight: 300;
+  margin: 0 0 20px;
+}
+
+.prose h2 {
+  font-family: 'Patrick Hand', cursive;
+  font-weight: 400;
+  font-size: 23px;
+  color: var(--navy);
+  margin: 38px 0 12px;
+}
+
+.prose .address {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--ink);
+  background: var(--w-yellow);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: var(--elev-8);
+  transform: rotate(-0.8deg);
+  margin-bottom: 30px;
+}
+
+/* ─── empty state ────────────────────────────────────────────── */
+
+.empty {
+  font-family: 'Patrick Hand', cursive;
+  font-size: 19px;
+  color: var(--muted);
+  padding: 36px 22px 80px;
+  max-width: 28ch;
+}
+
+/* ═══ desktop ═════════════════════════════════════════════════
+   The prompt is painted on the wall, so it doesn't scroll: pinned
+   left at full height while cards go past it. Two columns, not four
+   — at a few dozen responses a year, four leaves the screen empty.
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (min-width: 1080px) {
+  .board {
+    display: grid;
+    grid-template-columns: minmax(380px, 32%) 1fr;
+  }
+
+  .board-panel {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    padding: 46px 46px 42px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--hairline);
+  }
+
+  .nav,
+  .prompt,
+  .controls {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .nav { padding-top: 0; padding-bottom: 26px; }
+  .prompt { padding-top: 0; }
+
+  .prompt-line { font-size: clamp(60px, 5vw, 92px); }
+
+  /* Stays on its own line here too. The panel is narrower than the
+     headline at this size, so an inline blank wraps anyway and lands
+     as a stubby 120px stub that reads as a rendering fault rather
+     than as a blank. Full width is unambiguous. */
+  .prompt-blank { width: 86%; }
+
+  .controls {
+    margin-top: auto;
+    padding-bottom: 0;
+  }
+
+  .shuffle { margin-left: 0; }
+
+  .cards {
+    padding: 72px 46px 90px;
+    columns: 2;
+    column-gap: 26px;
+  }
+
+  /* Columns lay cards out top-to-bottom, so the overlap trick from
+     mobile would stack them into the gutter. Plain gaps instead. */
+  .cards .card,
+  .cards .card:nth-child(even) {
+    width: auto;
+    margin: 0 0 26px;
+  }
+
+  .cards .card:nth-child(4n + 1) { transform: rotate(-0.8deg); }
+  .cards .card:nth-child(4n + 2) { transform: rotate(0.7deg); }
+  .cards .card:nth-child(4n + 3) { transform: rotate(-0.4deg); }
+  .cards .card:nth-child(4n + 4) { transform: rotate(1deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .cards .card,
+  .cards .card:hover {
+    transform: none;
+    transition: none;
+  }
+}

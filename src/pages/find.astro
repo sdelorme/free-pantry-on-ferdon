@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import Daisy from '../components/Daisy.astro';
+
+// Address is a placeholder until Seth confirms what he wants public.
+// Worth deciding deliberately: this is a private home, and the street
+// address is the one piece of non-anonymous information on the site.
+const ADDRESS_PLACEHOLDER = '0000 Ferdon Ave, Lorem City, ST 00000';
+---
+
+<Base title="Find the pantry — Little Free Pantry on Ferdon">
+  <Fragment slot="panel">
+    <header class="prompt">
+      <div class="prompt-kicker">Ferdon Avenue · Little Free Pantry</div>
+      <h1 class="prompt-line">
+        <span class="ltr">F</span><span class="ltr">I</span><span class="ltr">N</span
+        ><span class="ltr">D</span><span class="ltr">&nbsp;</span><span class="ltr">I</span
+        ><span class="ltr">T</span>
+      </h1>
+    </header>
+  </Fragment>
+
+  <div class="prose">
+    <p class="address">
+      <Daisy color="var(--f-red)" size={30} petals={8} />
+      {ADDRESS_PLACEHOLDER}
+    </p>
+
+    <h2>Always open</h2>
+
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. The box is out
+      front and there is no lock, no sign-up, and nobody watching. Take what you
+      need, whenever you need it.
+    </p>
+
+    <h2>What helps right now</h2>
+
+    <p>
+      Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+      ad minim veniam, quis nostrud exercitation ullamco laboris.
+    </p>
+
+    <h2>What not to leave</h2>
+
+    <p>
+      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+      deserunt mollit anim id est laborum.
+    </p>
+  </div>
+</Base>

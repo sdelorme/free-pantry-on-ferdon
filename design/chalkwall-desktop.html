@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Pantry on Ferdon — chalkwall, desktop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Display:wght@500;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: "Inter", system-ui, sans-serif; background: #0d0e10; }
+
+/* ─── harness chrome (not part of the design) ─────────────────── */
+.note {
+  padding: 34px 48px 26px; color: #9d9a93; border-bottom: 1px solid #26282f;
+}
+.note h2 { color: #e8e6e1; font-size: 19px; font-weight: 600; margin: 0 0 4px; letter-spacing: -.01em; }
+.note .tag { font-size: 10.5px; letter-spacing: .2em; text-transform: uppercase; color: #65686f; margin-bottom: 10px; }
+.note p { margin: 0 0 7px; font-size: 14px; line-height: 1.7; max-width: 74ch; }
+.note b { color: #d4d1ca; font-weight: 500; }
+
+/* ═══════════════════════════════════════════════════════════════
+   SHARED — the chalkboard wall and its cards
+   ═══════════════════════════════════════════════════════════════ */
+.wall {
+  --board: #1b211e;
+  --chalk: #f2efe6;
+  background: var(--board);
+  position: relative;
+}
+.wall::before {   /* chalk grain */
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: .3;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23c)'/%3E%3C/svg%3E");
+}
+.wall::after {    /* wiped-chalk smears, so it reads as a used board */
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: .06;
+  background-image:
+    radial-gradient(ellipse 34% 16% at 14% 10%, #fff, transparent 70%),
+    radial-gradient(ellipse 28% 13% at 76% 38%, #fff, transparent 70%),
+    radial-gradient(ellipse 40% 15% at 42% 72%, #fff, transparent 70%);
+}
+
+/* ─── stencilled prompt ─── */
+.prompt-kicker {
+  font-size: 10.5px; letter-spacing: .26em; text-transform: uppercase;
+  color: rgba(242,239,230,.42); font-weight: 500;
+}
+.prompt-line {
+  font-family: "Big Shoulders Stencil Display", sans-serif;
+  font-weight: 700; line-height: .84; letter-spacing: .005em; text-transform: uppercase;
+  color: var(--chalk); margin: 20px 0 0;
+  text-shadow: 0 0 26px rgba(242,239,230,.14);
+}
+.prompt-blank {
+  display: inline-block; border-bottom: 6px solid rgba(242,239,230,.55);
+  margin-left: 6px; vertical-align: .14em;
+}
+.prompt-sub {
+  font-size: 14px; line-height: 1.7; color: rgba(242,239,230,.56);
+  margin: 26px 0 0; max-width: 34ch; font-weight: 300;
+}
+.prompt-sub b { color: rgba(242,239,230,.84); font-weight: 500; }
+
+/* ─── filter chips ─── */
+.chips { display: flex; gap: 9px; }
+.chip {
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  padding: 8px 17px; border-radius: 8px; cursor: pointer;
+  border: 1px solid rgba(242,239,230,.22);
+  background: rgba(242,239,230,.05); color: rgba(242,239,230,.72);
+  transition: background .15s, color .15s;
+}
+.chip:hover { background: rgba(242,239,230,.12); color: var(--chalk); }
+.chip[aria-pressed="true"] {
+  background: var(--chalk); color: #1b211e; border-color: var(--chalk);
+  box-shadow: 0 1px 5px rgba(0,0,0,.4), 0 2px 2px rgba(0,0,0,.3);
+}
+
+/* ─── card ─── */
+.card {
+  border-radius: 14px; padding: 22px 20px 16px;
+  break-inside: avoid; position: relative;
+  /* MUI elevation 16, deepened for a dark surface */
+  box-shadow:
+    0 8px 10px -5px rgba(0,0,0,.50),
+    0 16px 24px 2px rgba(0,0,0,.38),
+    0 6px 30px 5px  rgba(0,0,0,.32);
+  transition: transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s;
+}
+/* Hover raises the card further — the one interaction worth having,
+   because "pick a card up off the wall" is the whole metaphor. */
+.card:hover {
+  box-shadow:
+    0 11px 15px -7px rgba(0,0,0,.55),
+    0 24px 38px 3px  rgba(0,0,0,.42),
+    0 9px 46px 8px   rgba(0,0,0,.36);
+  z-index: 40 !important;
+}
+.card-quote { font-size: 17.5px; line-height: 1.45; letter-spacing: -.011em; color: #171a18; margin: 0; }
+.card-lead { font-weight: 600; }
+.card-meta {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(23,26,24,.11);
+}
+.card-type { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; font-weight: 600; }
+.card-date { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(23,26,24,.42); }
+
+.card[data-c="1"] { background: #f6ddd3; } .card[data-c="1"] .card-type { color: #9a4f2c; }
+.card[data-c="2"] { background: #f7e9c4; } .card[data-c="2"] .card-type { color: #8a6a14; }
+.card[data-c="3"] { background: #f2d9de; } .card[data-c="3"] .card-type { color: #9c3f58; }
+.card[data-c="4"] { background: #cfdfe4; } .card[data-c="4"] .card-type { color: #2f5f70; }
+.card[data-c="5"] { background: #d3e3d6; } .card[data-c="5"] .card-type { color: #35603f; }
+.card[data-c="6"] { background: #d7d8ea; } .card[data-c="6"] .card-type { color: #454a84; }
+
+/* Loose-pile tilt, applied inside whichever column the card lands in. */
+.wall-cards .card:nth-child(6n+1) { transform: rotate(-1.1deg); z-index: 1; }
+.wall-cards .card:nth-child(6n+2) { transform: rotate(.9deg);   z-index: 2; }
+.wall-cards .card:nth-child(6n+3) { transform: rotate(-.5deg);  z-index: 3; }
+.wall-cards .card:nth-child(6n+4) { transform: rotate(1.3deg);  z-index: 4; }
+.wall-cards .card:nth-child(6n+5) { transform: rotate(-.9deg);  z-index: 5; }
+.wall-cards .card:nth-child(6n+6) { transform: rotate(.4deg);   z-index: 6; }
+.wall-cards .card:hover { transform: rotate(0deg) translateY(-5px); }
+
+/* ═══ LAYOUT A · STENCIL STAYS PUT ═══════════════════════════════
+   The prompt is painted on the wall, so it does not scroll. Cards
+   accumulate alongside it. */
+.layout-a { display: grid; grid-template-columns: minmax(360px, 30%) 1fr; min-height: 100vh; }
+.layout-a .panel {
+  position: sticky; top: 0; align-self: start; height: 100vh;
+  padding: 76px 48px 48px; display: flex; flex-direction: column;
+  z-index: 2;
+  border-right: 1px solid rgba(242,239,230,.09);
+}
+.layout-a .prompt-line { font-size: clamp(56px, 5.2vw, 88px); }
+.layout-a .prompt-blank { width: clamp(130px, 13vw, 210px); }
+.layout-a .panel .chips { margin-top: auto; padding-top: 40px; flex-wrap: wrap; }
+.layout-a .wall-cards {
+  position: relative; z-index: 1;
+  padding: 76px 48px 90px;
+  columns: 3; column-gap: 26px;
+}
+.layout-a .wall-cards .card { margin: 0 0 26px; }
+@media (max-width: 1500px) { .layout-a .wall-cards { columns: 2; } }
+@media (max-width: 1080px) { .layout-a { grid-template-columns: 1fr; }
+  .layout-a .panel { position: static; height: auto; border-right: 0; }
+  .layout-a .wall-cards { columns: 1; } }
+
+/* ═══ LAYOUT B · BANNER WALL ═════════════════════════════════════
+   Prompt across the top at full width, cards below it. */
+.layout-b { padding-bottom: 90px; }
+.layout-b .banner {
+  position: relative; z-index: 2;
+  padding: 88px 48px 46px;
+  border-bottom: 1px solid rgba(242,239,230,.09);
+  display: grid; grid-template-columns: 1fr minmax(260px, 30%); gap: 48px; align-items: end;
+}
+.layout-b .prompt-line { font-size: clamp(64px, 8vw, 150px); }
+.layout-b .prompt-blank { width: clamp(150px, 20vw, 380px); }
+.layout-b .prompt-sub { margin: 0; max-width: none; }
+.layout-b .chips { padding: 40px 48px 0; position: relative; z-index: 2; }
+.layout-b .wall-cards {
+  position: relative; z-index: 1;
+  padding: 34px 48px 0; columns: 4; column-gap: 26px;
+}
+.layout-b .wall-cards .card { margin: 0 0 26px; }
+@media (max-width: 1400px) { .layout-b .wall-cards { columns: 3; } }
+@media (max-width: 1000px) { .layout-b .banner { grid-template-columns: 1fr; align-items: start; gap: 28px; }
+  .layout-b .wall-cards { columns: 2; } }
+@media (max-width: 680px)  { .layout-b .wall-cards { columns: 1; } }
+</style>
+</head>
+<body>
+
+<!-- ───────── LAYOUT A ───────── -->
+<div class="note">
+  <div class="tag">Desktop · Layout A</div>
+  <h2>Stencil stays put</h2>
+  <p>The prompt is painted on the wall, so it doesn't scroll — it's pinned to the left at full viewport
+     height while cards accumulate past it on the right. <b>Why I'd pick this one:</b> it's the layout that
+     only makes sense for this project. The blank stays in front of you the whole time you're reading other
+     people's answers to it, which is exactly what standing at Chang's wall feels like. Filters sit at the
+     bottom of the panel, always in reach, never competing with the headline.</p>
+  <p><b>What it costs:</b> the panel eats 30% of the screen permanently, so cards get three columns instead
+     of four. On a short laptop screen the panel gets cramped.</p>
+</div>
+<div class="wall layout-a">
+  <aside class="panel">
+    <div class="prompt-kicker">Ferdon Avenue · Free Pantry</div>
+    <h1 class="prompt-line">Because<span class="prompt-blank"></span></h1>
+    <p class="prompt-sub">Every card is someone who stopped at the box. <b>No names, no accounts, no tracking</b> — we keep the words and the date, and nothing else.</p>
+    <div class="chips">
+      <button class="chip" aria-pressed="true">Everything</button>
+      <button class="chip" aria-pressed="false">Gave</button>
+      <button class="chip" aria-pressed="false">Took</button>
+    </div>
+  </aside>
+  <div class="wall-cards">
+    <article class="card" data-c="1"><p class="card-quote"><span class="card-lead">I gave because</span> I had extra rice and nowhere to put it.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 18</span></div></article>
+    <article class="card" data-c="4"><p class="card-quote"><span class="card-lead">I took because</span> it's between paychecks. My kid eats first.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 18</span></div></article>
+    <article class="card" data-c="2"><p class="card-quote"><span class="card-lead">I gave because</span> someone did this for me once.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 16</span></div></article>
+    <article class="card" data-c="5"><p class="card-quote"><span class="card-lead">I took because</span> a car repair ate the grocery money this month.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 15</span></div></article>
+    <article class="card" data-c="3"><p class="card-quote"><span class="card-lead">I gave because</span> my garden made more tomatoes than two people can eat.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 14</span></div></article>
+    <article class="card" data-c="6"><p class="card-quote"><span class="card-lead">I took because</span> I just needed coffee and I didn't want to ask anyone.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 12</span></div></article>
+    <article class="card" data-c="1"><p class="card-quote"><span class="card-lead">I gave because</span> I walk past this box every day and finally stopped.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 11</span></div></article>
+    <article class="card" data-c="4"><p class="card-quote"><span class="card-lead">I took because</span> I'm okay, just stretched thin until Friday.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 9</span></div></article>
+    <article class="card" data-c="2"><p class="card-quote"><span class="card-lead">I gave because</span> my mother passed in March and she would have wanted the cans used.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 8</span></div></article>
+    <article class="card" data-c="5"><p class="card-quote"><span class="card-lead">I took because</span> I lost hours at work this week.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 6</span></div></article>
+    <article class="card" data-c="3"><p class="card-quote"><span class="card-lead">I gave because</span> my kids wanted to pick out what to put in. They chose the cereal.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 5</span></div></article>
+    <article class="card" data-c="6"><p class="card-quote"><span class="card-lead">I took because</span> the shelter kitchen is closed on Sundays.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 3</span></div></article>
+  </div>
+</div>
+
+<!-- ───────── LAYOUT B ───────── -->
+<div class="note">
+  <div class="tag">Desktop · Layout B</div>
+  <h2>Banner wall</h2>
+  <p>Prompt across the top at full width, set very large, then four columns of cards underneath.
+     <b>Why you might pick this one:</b> the headline gets to be enormous, which is the single strongest
+     thing about the Chang reference, and the wall gets the whole screen width — more cards visible at once,
+     better once the board has a few hundred on it.</p>
+  <p><b>What it costs:</b> the prompt scrolls away in about one flick, so for most of the time you're on the
+     page the blank isn't there. It's also a layout you've seen before.</p>
+</div>
+<div class="wall layout-b">
+  <header class="banner">
+    <div>
+      <div class="prompt-kicker">Ferdon Avenue · Free Pantry</div>
+      <h1 class="prompt-line">Because<span class="prompt-blank"></span></h1>
+    </div>
+    <p class="prompt-sub">Every card is someone who stopped at the box. <b>No names, no accounts, no tracking</b> — we keep the words and the date, and nothing else.</p>
+  </header>
+  <div class="chips">
+    <button class="chip" aria-pressed="true">Everything</button>
+    <button class="chip" aria-pressed="false">Gave</button>
+    <button class="chip" aria-pressed="false">Took</button>
+  </div>
+  <div class="wall-cards">
+    <article class="card" data-c="1"><p class="card-quote"><span class="card-lead">I gave because</span> I had extra rice and nowhere to put it.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 18</span></div></article>
+    <article class="card" data-c="4"><p class="card-quote"><span class="card-lead">I took because</span> it's between paychecks. My kid eats first.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 18</span></div></article>
+    <article class="card" data-c="2"><p class="card-quote"><span class="card-lead">I gave because</span> someone did this for me once.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 16</span></div></article>
+    <article class="card" data-c="5"><p class="card-quote"><span class="card-lead">I took because</span> a car repair ate the grocery money this month.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 15</span></div></article>
+    <article class="card" data-c="3"><p class="card-quote"><span class="card-lead">I gave because</span> my garden made more tomatoes than two people can eat.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 14</span></div></article>
+    <article class="card" data-c="6"><p class="card-quote"><span class="card-lead">I took because</span> I just needed coffee and I didn't want to ask anyone.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 12</span></div></article>
+    <article class="card" data-c="1"><p class="card-quote"><span class="card-lead">I gave because</span> I walk past this box every day and finally stopped.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 11</span></div></article>
+    <article class="card" data-c="4"><p class="card-quote"><span class="card-lead">I took because</span> I'm okay, just stretched thin until Friday.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 9</span></div></article>
+    <article class="card" data-c="2"><p class="card-quote"><span class="card-lead">I gave because</span> my mother passed in March and she would have wanted the cans used.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 8</span></div></article>
+    <article class="card" data-c="5"><p class="card-quote"><span class="card-lead">I took because</span> I lost hours at work this week.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 6</span></div></article>
+    <article class="card" data-c="3"><p class="card-quote"><span class="card-lead">I gave because</span> my kids wanted to pick out what to put in. They chose the cereal.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 5</span></div></article>
+    <article class="card" data-c="6"><p class="card-quote"><span class="card-lead">I took because</span> the shelter kitchen is closed on Sundays.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 3</span></div></article>
+  </div>
+</div>
+
+</body>
+</html>

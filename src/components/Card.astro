@@ -1,0 +1,57 @@
+---
+import Daisy from './Daisy.astro';
+import { cardColor, stemFor, type Response } from '../lib/responses';
+
+interface Props {
+  response: Response;
+}
+
+const { response } = Astro.props;
+
+const color = cardColor(response);
+const stem = stemFor(response);
+
+// Every fourth card gets a daisy in the corner. Sparse on purpose: the
+// box has a lot of flowers, but a flower on every card turns a wall of
+// people's words into wallpaper.
+const showDaisy = response.id % 4 === 0;
+
+const PETAL: Record<string, string> = {
+  red: 'var(--f-red)',
+  pink: 'var(--f-pink)',
+  orange: 'var(--f-orange)',
+  yellow: 'var(--f-orange)', // a yellow daisy on a yellow card vanishes
+  green: 'var(--f-green)',
+  teal: 'var(--f-teal)',
+  blue: 'var(--f-blue)',
+  purple: 'var(--f-purple)',
+};
+
+const displayDate = new Date(`${response.day}T00:00:00`).toLocaleDateString(
+  'en-US',
+  { month: 'short', day: 'numeric' },
+);
+---
+
+<article class="card" data-color={color} data-kind={response.kind}>
+  {
+    showDaisy && (
+      <span class="card-daisy">
+        <Daisy color={PETAL[color]!} size={26} />
+      </span>
+    )
+  }
+
+  <p class="card-quote">
+    <span class="card-stem">{stem}</span>
+    {' '}{response.body}
+  </p>
+
+  <div class="card-meta">
+    <span class="card-kind">
+      {response.kind}
+      {response.lang !== 'en' && <span class="card-lang">{response.lang}</span>}
+    </span>
+    <time class="card-date" datetime={response.day}>{displayDate}</time>
+  </div>
+</article>

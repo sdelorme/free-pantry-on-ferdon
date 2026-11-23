@@ -1,0 +1,96 @@
+---
+import Base from '../layouts/Base.astro';
+import Card from '../components/Card.astro';
+import Daisy from '../components/Daisy.astro';
+import { publishedResponses } from '../lib/responses';
+
+// The board shows approved responses, so it has to be rendered per
+// request rather than at build time — a card going up must not require
+// a redeploy. Every other page in the site stays static.
+export const prerender = false;
+
+const responses = await publishedResponses();
+---
+
+<Base title="Because ___ — Little Free Pantry on Ferdon">
+  <Fragment slot="panel">
+    <header class="prompt">
+      <div class="prompt-kicker">Ferdon Avenue · Little Free Pantry</div>
+
+      <h1 class="prompt-line">
+        <span class="ltr">B</span><span class="ltr">E</span><span class="ltr">C</span
+        ><span class="ltr">A</span><span class="ltr">U</span><span class="ltr">S</span
+        ><span class="ltr">E</span><span class="prompt-blank"></span>
+      </h1>
+
+      <p class="prompt-sub">
+        Every card is someone who stopped at our box.
+        <strong>No names, no accounts, no tracking</strong> — we keep the words and
+        the date, and nothing else.
+      </p>
+    </header>
+
+    <div class="controls">
+      <button class="chip" data-filter="all" aria-pressed="true">All</button>
+      <button class="chip" data-filter="gave" aria-pressed="false">Gave</button>
+      <button class="chip" data-filter="took" aria-pressed="false">Took</button>
+      <button class="shuffle" data-shuffle>⤮ Shuffle</button>
+    </div>
+  </Fragment>
+
+  {
+    responses.length === 0 ? (
+      <div class="empty">
+        <Daisy color="var(--f-lilac)" size={44} petals={8} />
+        <p>Nothing on the board yet. The first card goes up as soon as someone leaves one.</p>
+      </div>
+    ) : (
+      <div class="cards" id="cards">
+        {responses.map((response) => (
+          <Card response={response} />
+        ))}
+      </div>
+    )
+  }
+</Base>
+
+<script>
+  // Filter and shuffle, in place. At a few dozen cards there is nothing
+  // to gain from a framework or a round trip — the whole board is
+  // already in the DOM, so both operations are instant and the page
+  // ships no runtime.
+  const cards = document.getElementById('cards');
+
+  if (cards) {
+    const chips = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const want = chip.dataset.filter;
+
+        chips.forEach((other) =>
+          other.setAttribute('aria-pressed', String(other === chip)),
+        );
+
+        for (const card of cards.children) {
+          const matches = want === 'all' || card.getAttribute('data-kind') === want;
+          card.toggleAttribute('hidden', !matches);
+        }
+      });
+    });
+
+    document.querySelector('[data-shuffle]')?.addEventListener('click', () => {
+      // Fisher-Yates over the live children, reappending as we go. The
+      // tilt and overlap come from :nth-child, so the pile reshuffles
+      // its geometry for free.
+      const order = [...cards.children];
+
+      for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [order[i], order[j]] = [order[j]!, order[i]!];
+      }
+
+      cards.append(...order);
+    });
+  }
+</script>

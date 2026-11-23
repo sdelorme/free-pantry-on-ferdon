@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Pantry on Ferdon — chalkwall direction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Display:wght@500;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ─── harness chrome (not part of the design) ─────────────────── */
+body { margin: 0; background: #0d0e10; color: #e8e6e1; font-family: "Inter", system-ui, sans-serif; }
+.harness { padding: 48px 20px 80px; }
+.harness-head { max-width: 780px; margin: 0 auto 40px; }
+.harness-head h1 { font-size: 24px; font-weight: 600; letter-spacing: -.02em; margin: 0 0 12px; }
+.harness-head p { color: #9d9a93; font-size: 14.5px; line-height: 1.7; margin: 0 0 10px; max-width: 64ch; }
+.harness-head b { color: #d4d1ca; font-weight: 500; }
+.phones { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; align-items: flex-start; }
+.phone-wrap { display: flex; flex-direction: column; }
+.phone {
+  width: 390px; max-width: 100%; height: 800px; overflow-y: auto; overflow-x: hidden;
+  border-radius: 36px; border: 9px solid #000; box-shadow: 0 30px 70px rgba(0,0,0,.7);
+  position: relative;
+}
+.phone-label { text-align: center; margin-top: 14px; }
+.phone-label span { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: #6c6f76; }
+.phone-label em { display: block; font-style: normal; font-size: 13px; color: #a8a5a0; margin-top: 5px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   THE BOARD
+   A chalkboard wall. Cards are chalk responses lifted into objects.
+   ═══════════════════════════════════════════════════════════════ */
+.wall {
+  --board: #1b211e;          /* chalkboard green-black, not pure black */
+  --chalk: #f2efe6;
+  background: var(--board);
+  min-height: 100%;
+  position: relative;
+  padding-bottom: 60px;
+}
+
+/* Chalk dust. Two passes: fine grain + soft smears, so it reads as a
+   used board rather than flat dark paint. */
+.wall::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: .32;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23c)'/%3E%3C/svg%3E");
+}
+.wall::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: .07;
+  background-image:
+    radial-gradient(ellipse 60% 22% at 18% 12%, #fff, transparent 70%),
+    radial-gradient(ellipse 50% 18% at 82% 44%, #fff, transparent 70%),
+    radial-gradient(ellipse 70% 20% at 40% 78%, #fff, transparent 70%);
+}
+
+.wall-inner { position: relative; z-index: 1; }
+
+/* ─── the prompt: stencilled, like the wall itself ─── */
+.prompt { padding: 40px 22px 10px; }
+.prompt-kicker {
+  font-size: 10px; letter-spacing: .26em; text-transform: uppercase;
+  color: rgba(242,239,230,.42); font-weight: 500;
+}
+.prompt-line {
+  font-family: "Big Shoulders Stencil Display", sans-serif;
+  font-weight: 700; font-size: 58px; line-height: .86; letter-spacing: .005em;
+  text-transform: uppercase; color: var(--chalk); margin: 18px 0 0;
+  text-shadow: 0 0 22px rgba(242,239,230,.14);   /* chalk bloom */
+}
+.prompt-blank {
+  display: inline-block; width: 128px; border-bottom: 5px solid rgba(242,239,230,.55);
+  margin-left: 4px; vertical-align: 7px;
+}
+.prompt-sub {
+  font-size: 13.5px; line-height: 1.65; color: rgba(242,239,230,.56);
+  margin: 20px 0 0; max-width: 33ch; font-weight: 300;
+}
+.prompt-sub b { color: rgba(242,239,230,.82); font-weight: 500; }
+
+/* ─── filter: MUI filter chips ─── */
+.chips { display: flex; gap: 8px; padding: 26px 22px 6px; }
+.chip {
+  font-family: inherit; font-size: 12.5px; font-weight: 500; letter-spacing: .01em;
+  padding: 7px 16px; border-radius: 8px; cursor: pointer;
+  border: 1px solid rgba(242,239,230,.22);
+  background: rgba(242,239,230,.05); color: rgba(242,239,230,.72);
+  transition: background .15s, color .15s;
+}
+.chip[aria-pressed="true"] {
+  background: var(--chalk); color: #1b211e; border-color: var(--chalk);
+  box-shadow: 0 1px 5px rgba(0,0,0,.4), 0 2px 2px rgba(0,0,0,.3);
+}
+
+.board { padding: 18px 18px 0; }
+
+/* ─── the card ───
+   Pale chalk-pastel fills on a dark board. On a dark surface a shadow
+   alone barely reads, so lift is carried by TWO signals at once:
+   a lighter surface (Material's dark-theme elevation overlay) plus
+   the shadow stack. */
+.card {
+  border-radius: 14px; padding: 20px 18px 15px; position: relative;
+  break-inside: avoid;
+}
+.card-quote {
+  font-size: 17.5px; line-height: 1.44; letter-spacing: -.011em;
+  font-weight: 400; color: #171a18; margin: 0;
+}
+.card-lead { font-weight: 600; }
+.card-meta {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-top: 15px; padding-top: 11px; border-top: 1px solid rgba(23,26,24,.11);
+}
+.card-type { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; font-weight: 600; }
+.card-date { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(23,26,24,.42); }
+
+/* warm = gave, cool = took. Several shades per family so no two
+   neighbours match, but the two groups still separate across the page. */
+.card[data-c="1"] { background: #f6ddd3; } .card[data-c="1"] .card-type { color: #9a4f2c; }
+.card[data-c="2"] { background: #f7e9c4; } .card[data-c="2"] .card-type { color: #8a6a14; }
+.card[data-c="3"] { background: #f2d9de; } .card[data-c="3"] .card-type { color: #9c3f58; }
+.card[data-c="4"] { background: #cfdfe4; } .card[data-c="4"] .card-type { color: #2f5f70; }
+.card[data-c="5"] { background: #d3e3d6; } .card[data-c="5"] .card-type { color: #35603f; }
+.card[data-c="6"] { background: #d7d8ea; } .card[data-c="6"] .card-type { color: #454a84; }
+
+/* ═══ VARIANT 1 · RESTRAINED ═══════════════════════════════════
+   MUI elevation 2–3. Even grid, no rotation, nothing overlaps.
+   Cards read as a tidy stack of records. */
+.v-restrained .board { display: grid; gap: 16px; }
+.v-restrained .card {
+  box-shadow:
+    0 3px 1px -2px rgba(0,0,0,.42),
+    0 2px 2px 0    rgba(0,0,0,.34),
+    0 1px 5px 0    rgba(0,0,0,.30);
+}
+
+/* ═══ VARIANT 2 · LAYERED ══════════════════════════════════════
+   MUI elevation 8–16, cards tilted a degree and pulled up into each
+   other so they physically overlap. Reads as a wall people keep
+   adding to, not a feed. */
+.v-layered .board { padding-top: 26px; }
+.v-layered .card {
+  box-shadow:
+    0 8px 10px -5px rgba(0,0,0,.50),
+    0 16px 24px 2px rgba(0,0,0,.38),
+    0 6px 30px 5px  rgba(0,0,0,.32);
+}
+/* Each card is pulled up over the one before and nudged sideways, so
+   the column tiles into a loose pile instead of a list. Later cards
+   sit on top — z-index climbs down the wall. */
+.v-layered .card:nth-child(n)      { margin-top: -14px; }
+.v-layered .card:nth-child(1)      { margin-top: 0; }
+.v-layered .card:nth-child(6n+1)   { transform: rotate(-1.1deg) translateX(-5px); z-index: 1; }
+.v-layered .card:nth-child(6n+2)   { transform: rotate(.9deg)  translateX(10px); z-index: 2; }
+.v-layered .card:nth-child(6n+3)   { transform: rotate(-.5deg) translateX(-2px); z-index: 3; }
+.v-layered .card:nth-child(6n+4)   { transform: rotate(1.3deg) translateX(6px);  z-index: 4; }
+.v-layered .card:nth-child(6n+5)   { transform: rotate(-.9deg) translateX(-8px); z-index: 5; }
+.v-layered .card:nth-child(6n+6)   { transform: rotate(.4deg)  translateX(3px);  z-index: 6; }
+/* Width varies so the overlap has something to bite on. */
+.v-layered .card:nth-child(odd)    { width: 95%; }
+.v-layered .card:nth-child(even)   { width: 89%; margin-left: auto; }
+</style>
+</head>
+<body>
+<div class="harness">
+
+  <div class="harness-head">
+    <h1>Free Pantry on Ferdon — chalkwall</h1>
+    <p>Candy Chang's wall, translated. The board is a chalkboard with a stencilled fill-in-the-blank prompt;
+       every card completes the sentence in the headline. Chalk texture and the stencil face carry the
+       analog reference, but the answers are set in clean type — one handwriting font across every card would
+       put the same hand on every person, which the eye reads as fake.</p>
+    <p><b>The question on the table:</b> how much lift. Both phones are the same board, same content,
+       same colours. Only the elevation and the geometry change.</p>
+  </div>
+
+  <div class="phones">
+
+    <!-- ───────── VARIANT 1 ───────── -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="wall v-restrained">
+          <div class="wall-inner">
+            <header class="prompt">
+              <div class="prompt-kicker">Ferdon Avenue · Free Pantry</div>
+              <h1 class="prompt-line">Because<span class="prompt-blank"></span></h1>
+              <p class="prompt-sub">Every card is someone who stopped at the box. <b>No names, no accounts, no tracking</b> — we keep the words and the date, and nothing else.</p>
+            </header>
+            <div class="chips">
+              <button class="chip" aria-pressed="true">Everything</button>
+              <button class="chip" aria-pressed="false">Gave</button>
+              <button class="chip" aria-pressed="false">Took</button>
+            </div>
+            <div class="board">
+              <article class="card" data-c="1"><p class="card-quote"><span class="card-lead">I gave because</span> I had extra rice and nowhere to put it.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 18</span></div></article>
+              <article class="card" data-c="4"><p class="card-quote"><span class="card-lead">I took because</span> it's between paychecks. My kid eats first.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 18</span></div></article>
+              <article class="card" data-c="2"><p class="card-quote"><span class="card-lead">I gave because</span> someone did this for me once.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 16</span></div></article>
+              <article class="card" data-c="5"><p class="card-quote"><span class="card-lead">I took because</span> a car repair ate the grocery money this month.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 15</span></div></article>
+              <article class="card" data-c="3"><p class="card-quote"><span class="card-lead">I gave because</span> my garden made more tomatoes than two people can eat.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 14</span></div></article>
+              <article class="card" data-c="6"><p class="card-quote"><span class="card-lead">I took because</span> I just needed coffee and I didn't want to ask anyone.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 12</span></div></article>
+              <article class="card" data-c="1"><p class="card-quote"><span class="card-lead">I gave because</span> I walk past this box every day and finally stopped.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 11</span></div></article>
+              <article class="card" data-c="4"><p class="card-quote"><span class="card-lead">I took because</span> I'm okay, just stretched thin until Friday.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 9</span></div></article>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">
+        <span>Variant 1</span>
+        <em>Restrained · elevation 2</em>
+      </div>
+    </div>
+
+    <!-- ───────── VARIANT 2 ───────── -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="wall v-layered">
+          <div class="wall-inner">
+            <header class="prompt">
+              <div class="prompt-kicker">Ferdon Avenue · Free Pantry</div>
+              <h1 class="prompt-line">Because<span class="prompt-blank"></span></h1>
+              <p class="prompt-sub">Every card is someone who stopped at the box. <b>No names, no accounts, no tracking</b> — we keep the words and the date, and nothing else.</p>
+            </header>
+            <div class="chips">
+              <button class="chip" aria-pressed="true">Everything</button>
+              <button class="chip" aria-pressed="false">Gave</button>
+              <button class="chip" aria-pressed="false">Took</button>
+            </div>
+            <div class="board">
+              <article class="card" data-c="1"><p class="card-quote"><span class="card-lead">I gave because</span> I had extra rice and nowhere to put it.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 18</span></div></article>
+              <article class="card" data-c="4"><p class="card-quote"><span class="card-lead">I took because</span> it's between paychecks. My kid eats first.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 18</span></div></article>
+              <article class="card" data-c="2"><p class="card-quote"><span class="card-lead">I gave because</span> someone did this for me once.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 16</span></div></article>
+              <article class="card" data-c="5"><p class="card-quote"><span class="card-lead">I took because</span> a car repair ate the grocery money this month.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 15</span></div></article>
+              <article class="card" data-c="3"><p class="card-quote"><span class="card-lead">I gave because</span> my garden made more tomatoes than two people can eat.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 14</span></div></article>
+              <article class="card" data-c="6"><p class="card-quote"><span class="card-lead">I took because</span> I just needed coffee and I didn't want to ask anyone.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 12</span></div></article>
+              <article class="card" data-c="1"><p class="card-quote"><span class="card-lead">I gave because</span> I walk past this box every day and finally stopped.</p><div class="card-meta"><span class="card-type">Gave</span><span class="card-date">Nov 11</span></div></article>
+              <article class="card" data-c="4"><p class="card-quote"><span class="card-lead">I took because</span> I'm okay, just stretched thin until Friday.</p><div class="card-meta"><span class="card-type">Took</span><span class="card-date">Nov 9</span></div></article>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">
+        <span>Variant 2</span>
+        <em>Layered · elevation 16, cards overlap</em>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

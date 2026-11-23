@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Pantry on Ferdon — v2, from the box</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Patrick+Hand&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ═══════════════════════════════════════════════════════════════
+   PALETTE — sampled off the box, not invented
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --navy:    #333c6a;          /* the FREE letters */
+  --ink:     #1f2430;
+  --paint:   #fdfbf4;          /* white painted board */
+
+  --f-red:    #e2434a;
+  --f-pink:   #ea69a4;
+  --f-purple: #7c4fa8;
+  --f-lilac:  #b48ad6;
+  --f-green:  #56b25a;
+  --f-teal:   #35aed0;
+  --f-blue:   #3f7fd0;
+  --f-orange: #f1892f;
+  --f-yellow: #ffd63c;         /* every daisy centre */
+
+  /* card fills: the flower colours at paint-wash strength, so 180
+     characters of someone's words stay readable on top of them */
+  --w-red:    #fbdfdf;
+  --w-pink:   #fbdeec;
+  --w-orange: #fde8d2;
+  --w-yellow: #fdf2cc;
+  --w-green:  #ddf0dc;
+  --w-teal:   #d6eef5;
+  --w-blue:   #dce8f8;
+  --w-purple: #e6dcf3;
+}
+
+/* ─── harness chrome (not part of the design) ─────────────────── */
+body { margin: 0; font-family: "Inter", system-ui, sans-serif; background: #15161a; color: #e8e6e1; }
+.note { padding: 40px 44px 30px; border-bottom: 1px solid #26282f; }
+.note .tag { font-size: 10.5px; letter-spacing: .2em; text-transform: uppercase; color: #65686f; margin-bottom: 9px; }
+.note h2 { color: #e8e6e1; font-size: 20px; font-weight: 600; margin: 0 0 10px; letter-spacing: -.015em; }
+.note p { margin: 0 0 8px; font-size: 14px; line-height: 1.7; color: #9d9a93; max-width: 76ch; }
+.note b { color: #d4d1ca; font-weight: 500; }
+.phones { display: flex; gap: 38px; justify-content: center; flex-wrap: wrap; align-items: flex-start; padding: 44px 20px 70px; }
+.phone-wrap { display: flex; flex-direction: column; }
+.phone { width: 390px; max-width: 100%; height: 810px; overflow-y: auto; overflow-x: hidden;
+  border-radius: 36px; border: 9px solid #000; box-shadow: 0 30px 70px rgba(0,0,0,.65); }
+.phone-label { text-align: center; margin-top: 13px; }
+.phone-label span { font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: #6c6f76; }
+.phone-label em { display: block; font-style: normal; font-size: 13px; color: #a8a5a0; margin-top: 5px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   THE BOARD — white painted wood
+   ═══════════════════════════════════════════════════════════════ */
+.board {
+  background: var(--paint); color: var(--ink);
+  position: relative; min-height: 100%;
+}
+/* Paint tooth + the faintest plank seams. Enough to feel like a
+   painted surface, not enough to notice as a texture. */
+.board::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: .5;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23p)' opacity='.22'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(90deg, transparent 0 139px, rgba(31,36,48,.045) 139px 140px);
+}
+.board-inner { position: relative; z-index: 1; }
+
+/* ─── scattered daisies, lifted off the box ─── */
+.daisy { position: absolute; pointer-events: none; z-index: 0; }
+.daisy svg { display: block; }
+
+/* ─── the stencil-equivalent: hand-lettered prompt ─── */
+.prompt { padding: 38px 22px 4px; position: relative; }
+.prompt-kicker {
+  font-family: "Patrick Hand", cursive; font-size: 15px; letter-spacing: .04em;
+  color: var(--f-purple);
+}
+.prompt-line {
+  font-family: "Lilita One", cursive; font-size: 62px; line-height: .9;
+  letter-spacing: .005em; text-transform: uppercase; margin: 12px 0 0; color: var(--navy);
+}
+/* The box's lettering: navy fill, offset outline, a different colour
+   per letter. Built from four text-shadows so the outline is solid. */
+.prompt-line .ltr {
+  --o: var(--f-red);
+  text-shadow:
+    -3px -3px 0 var(--o),  3px -3px 0 var(--o),
+    -3px  3px 0 var(--o),  3px  3px 0 var(--o),
+     0   -3px 0 var(--o),  0    3px 0 var(--o),
+    -3px  0   0 var(--o),  3px  0   0 var(--o);
+}
+.prompt-line .ltr:nth-child(1) { --o: var(--f-red); }
+.prompt-line .ltr:nth-child(2) { --o: var(--f-yellow); }
+.prompt-line .ltr:nth-child(3) { --o: var(--f-teal); }
+.prompt-line .ltr:nth-child(4) { --o: var(--f-orange); }
+.prompt-line .ltr:nth-child(5) { --o: var(--f-green); }
+.prompt-line .ltr:nth-child(6) { --o: var(--f-pink); }
+.prompt-line .ltr:nth-child(7) { --o: var(--f-lilac); }
+.prompt-blank {
+  display: inline-block; width: 112px; height: 0;
+  border-bottom: 7px solid var(--navy); margin-left: 7px; vertical-align: .16em;
+}
+.prompt-sub {
+  font-size: 14px; line-height: 1.68; color: #57606f; margin: 22px 0 0;
+  max-width: 33ch; font-weight: 300;
+}
+.prompt-sub b { color: var(--ink); font-weight: 500; }
+
+/* ─── controls: filter chips + shuffle ─── */
+.controls {
+  display: flex; gap: 8px; align-items: center; padding: 24px 22px 8px; flex-wrap: wrap;
+}
+.chip {
+  font-family: "Inter", sans-serif; font-size: 12.5px; font-weight: 500;
+  padding: 8px 15px; border-radius: 9px; cursor: pointer;
+  border: 1.5px solid rgba(31,36,48,.16); background: #fff; color: #4a5365;
+  box-shadow: 0 1px 2px rgba(31,36,48,.07);
+  transition: background .15s, color .15s, border-color .15s;
+}
+.chip:hover { border-color: rgba(31,36,48,.34); }
+.chip[aria-pressed="true"] {
+  background: var(--navy); color: #fff; border-color: var(--navy);
+  box-shadow: 0 2px 2px rgba(51,60,106,.2), 0 1px 5px rgba(51,60,106,.18);
+}
+.shuffle {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 7px;
+  font-family: "Patrick Hand", cursive; font-size: 15.5px; cursor: pointer;
+  padding: 7px 14px; border-radius: 9px; border: 1.5px dashed var(--f-purple);
+  background: transparent; color: var(--f-purple);
+}
+.shuffle:hover { background: rgba(124,79,168,.07); }
+
+/* ─── cards ─── */
+.cards { padding: 18px 18px 54px; position: relative; z-index: 1; }
+.card {
+  border-radius: 14px; padding: 20px 18px 14px; position: relative; break-inside: avoid;
+  /* MUI elevation 8. On white these read immediately — no surface
+     tint needed, which is why the light board is simpler to build. */
+  box-shadow:
+    0 5px 5px -3px rgba(31,36,48,.16),
+    0 8px 10px 1px rgba(31,36,48,.11),
+    0 3px 14px 2px rgba(31,36,48,.09);
+  transition: transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s;
+}
+.card:hover {
+  box-shadow:
+    0 8px 10px -5px rgba(31,36,48,.2),
+    0 16px 24px 2px rgba(31,36,48,.14),
+    0 6px 30px 5px rgba(31,36,48,.11);
+  z-index: 40 !important;
+}
+/* A single daisy in the corner, in the card's own colour. */
+.card-daisy { position: absolute; top: -9px; right: -7px; }
+.card-quote { font-size: 17px; line-height: 1.46; letter-spacing: -.009em; margin: 0; color: var(--ink); }
+.card-lead { font-weight: 600; }
+.card-meta {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-top: 15px; padding-top: 11px; border-top: 1px solid rgba(31,36,48,.1);
+}
+.card-type {
+  font-family: "Patrick Hand", cursive; font-size: 14px; letter-spacing: .03em;
+}
+.card-date { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(31,36,48,.38); }
+/* Non-English responses stay exactly as written. A small tag, no translation. */
+.card-lang {
+  font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; font-weight: 600;
+  color: rgba(31,36,48,.4); border: 1px solid rgba(31,36,48,.18);
+  border-radius: 4px; padding: 2px 5px; margin-left: 7px;
+}
+
+/* Warm daisies = gave, cool daisies = took. The rainbow still reads
+   as two groups across the page. */
+.card[data-c="red"]    { background: var(--w-red); }    .card[data-c="red"]    .card-type { color: #b02c33; }
+.card[data-c="pink"]   { background: var(--w-pink); }   .card[data-c="pink"]   .card-type { color: #bc4a7f; }
+.card[data-c="orange"] { background: var(--w-orange); } .card[data-c="orange"] .card-type { color: #b7651c; }
+.card[data-c="yellow"] { background: var(--w-yellow); } .card[data-c="yellow"] .card-type { color: #917706; }
+.card[data-c="green"]  { background: var(--w-green); }  .card[data-c="green"]  .card-type { color: #2f7d33; }
+.card[data-c="teal"]   { background: var(--w-teal); }   .card[data-c="teal"]   .card-type { color: #1b7794; }
+.card[data-c="blue"]   { background: var(--w-blue); }   .card[data-c="blue"]   .card-type { color: #2a5a9c; }
+.card[data-c="purple"] { background: var(--w-purple); } .card[data-c="purple"] .card-type { color: #633e8d; }
+
+/* ─── mobile: loose pile, cards overlap slightly ─── */
+.m-board .cards .card { margin-bottom: -8px; width: 94%; }
+.m-board .cards .card:nth-child(even) { margin-left: auto; width: 90%; }
+.m-board .cards .card:nth-child(6n+1) { transform: rotate(-1.1deg); z-index: 1; }
+.m-board .cards .card:nth-child(6n+2) { transform: rotate(.9deg);  z-index: 2; }
+.m-board .cards .card:nth-child(6n+3) { transform: rotate(-.5deg); z-index: 3; }
+.m-board .cards .card:nth-child(6n+4) { transform: rotate(1.3deg); z-index: 4; }
+.m-board .cards .card:nth-child(6n+5) { transform: rotate(-.9deg); z-index: 5; }
+.m-board .cards .card:nth-child(6n+6) { transform: rotate(.4deg);  z-index: 6; }
+.m-board .cards .card:hover { transform: rotate(0deg) translateY(-4px); }
+
+/* ═══════════════════════════════════════════════════════════════
+   POST-SUBMIT — their own words, as the card they'll become
+   ═══════════════════════════════════════════════════════════════ */
+.thanks { padding: 70px 24px 50px; text-align: center; position: relative; }
+.thanks-mark { font-family: "Lilita One", cursive; font-size: 30px; color: var(--navy); margin: 0; letter-spacing: .01em; }
+.thanks-mark span { color: var(--f-pink); }
+.thanks-sub {
+  font-family: "Patrick Hand", cursive; font-size: 19px; color: #5c6473;
+  margin: 12px auto 34px; max-width: 26ch; line-height: 1.5;
+}
+.thanks .card { text-align: left; transform: rotate(-1.2deg); margin-bottom: 30px; }
+.thanks-promise {
+  font-size: 12.5px; line-height: 1.7; color: #6b7382; max-width: 30ch;
+  margin: 0 auto 30px; font-weight: 300;
+}
+.thanks-promise b { color: var(--ink); font-weight: 500; }
+.cta {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: "Inter", sans-serif; font-size: 14.5px; font-weight: 500;
+  background: var(--navy); color: #fff; border: 0; border-radius: 11px;
+  padding: 14px 24px; cursor: pointer; text-decoration: none;
+  box-shadow: 0 3px 1px -2px rgba(51,60,106,.3), 0 2px 2px rgba(51,60,106,.24), 0 1px 5px rgba(51,60,106,.2);
+}
+.cta:hover { box-shadow: 0 5px 5px -3px rgba(51,60,106,.34), 0 8px 10px 1px rgba(51,60,106,.24); }
+
+/* ═══════════════════════════════════════════════════════════════
+   DESKTOP — prompt stays put, two columns of cards
+   ═══════════════════════════════════════════════════════════════ */
+.d-board { display: grid; grid-template-columns: minmax(380px, 32%) 1fr; min-height: 100vh; }
+.d-board .panel {
+  position: sticky; top: 0; align-self: start; height: 100vh; z-index: 2;
+  padding: 72px 46px 42px; display: flex; flex-direction: column;
+  border-right: 1px solid rgba(31,36,48,.1);
+}
+.d-board .prompt { padding: 0; }
+.d-board .prompt-line { font-size: clamp(60px, 5vw, 92px); }
+.d-board .prompt-blank { width: clamp(120px, 12vw, 190px); }
+.d-board .panel .controls { margin-top: auto; padding: 36px 0 0; }
+.d-board .panel .shuffle { margin-left: 0; }
+.d-board .nav {
+  display: flex; gap: 20px; font-family: "Patrick Hand", cursive; font-size: 16px;
+  padding-bottom: 26px;
+}
+.d-board .nav a { color: #6b7382; text-decoration: none; }
+.d-board .nav a:hover, .d-board .nav a[aria-current] { color: var(--navy); text-decoration: underline; }
+.d-board .cards { padding: 72px 46px 90px; columns: 2; column-gap: 26px; }
+.d-board .cards .card { margin: 0 0 26px; }
+.d-board .cards .card:nth-child(4n+1) { transform: rotate(-.8deg); }
+.d-board .cards .card:nth-child(4n+2) { transform: rotate(.7deg); }
+.d-board .cards .card:nth-child(4n+3) { transform: rotate(-.4deg); }
+.d-board .cards .card:nth-child(4n+4) { transform: rotate(1deg); }
+.d-board .cards .card:hover { transform: rotate(0deg) translateY(-4px); }
+@media (max-width: 1080px) {
+  .d-board { grid-template-columns: 1fr; }
+  .d-board .panel { position: static; height: auto; border-right: 0; }
+  .d-board .cards { columns: 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═════════ MOBILE ═════════ -->
+<div class="note">
+  <div class="tag">Mobile · 390 × 810</div>
+  <h2>The board, and the screen after someone submits</h2>
+  <p><b>Left:</b> the wall as a neighbour finds it after scanning. Fifteen cards, which is roughly a year at
+     the rate you expect. Cards overlap by a few pixels and sit a degree off square, so it reads as a pile
+     people keep adding to rather than a feed. Shuffle sits opposite the filters.</p>
+  <p><b>Right:</b> the post-submit screen you approved — their own words, in the card they'll become, with the
+     "see what others wrote" CTA you asked for. The anonymity promise sits directly under the card, where it
+     can be checked against what's actually on screen.</p>
+</div>
+<div class="phones">
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="board m-board">
+        <div class="board-inner">
+          <header class="prompt">
+            <span class="daisy" style="top:6px; right:16px;"><svg width="54" height="54" viewBox="0 0 100 100"><g fill="#b48ad6"><ellipse cx="50" cy="20" rx="11" ry="20"/><ellipse cx="50" cy="80" rx="11" ry="20"/><ellipse cx="20" cy="50" rx="20" ry="11"/><ellipse cx="80" cy="50" rx="20" ry="11"/><ellipse cx="28" cy="28" rx="11" ry="20" transform="rotate(-45 28 28)"/><ellipse cx="72" cy="28" rx="11" ry="20" transform="rotate(45 72 28)"/><ellipse cx="28" cy="72" rx="11" ry="20" transform="rotate(45 28 72)"/><ellipse cx="72" cy="72" rx="11" ry="20" transform="rotate(-45 72 72)"/></g><circle cx="50" cy="50" r="13" fill="#ffd63c"/></svg></span>
+            <div class="prompt-kicker">Ferdon Avenue · Little Free Pantry</div>
+            <h1 class="prompt-line"><span class="ltr">B</span><span class="ltr">E</span><span class="ltr">C</span><span class="ltr">A</span><span class="ltr">U</span><span class="ltr">S</span><span class="ltr">E</span><span class="prompt-blank"></span></h1>
+            <p class="prompt-sub">Every card is someone who stopped at our box. <b>No names, no accounts, no tracking</b> — we keep the words and the date, and nothing else.</p>
+          </header>
+
+          <div class="controls">
+            <button class="chip" aria-pressed="true">All</button>
+            <button class="chip" aria-pressed="false">Gave</button>
+            <button class="chip" aria-pressed="false">Took</button>
+            <button class="shuffle">⤮ Shuffle</button>
+          </div>
+
+          <div class="cards">
+            <article class="card" data-c="pink"><span class="card-daisy"><svg width="26" height="26" viewBox="0 0 100 100"><g fill="#ea69a4"><ellipse cx="50" cy="20" rx="11" ry="20"/><ellipse cx="50" cy="80" rx="11" ry="20"/><ellipse cx="20" cy="50" rx="20" ry="11"/><ellipse cx="80" cy="50" rx="20" ry="11"/></g><circle cx="50" cy="50" r="13" fill="#ffd63c"/></svg></span><p class="card-quote"><span class="card-lead">I gave because</span> I had extra rice and nowhere to put it.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Nov 18</span></div></article>
+
+            <article class="card" data-c="teal"><p class="card-quote"><span class="card-lead">I took because</span> it's between paychecks. My kid eats first.</p><div class="card-meta"><span class="card-type">took</span><span class="card-date">Nov 18</span></div></article>
+
+            <article class="card" data-c="yellow"><p class="card-quote"><span class="card-lead">I gave because</span> someone did this for me once.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Nov 16</span></div></article>
+
+            <article class="card" data-c="blue"><p class="card-quote"><span class="card-lead">I took because</span> a car repair ate the grocery money this month.</p><div class="card-meta"><span class="card-type">took</span><span class="card-date">Nov 15</span></div></article>
+
+            <article class="card" data-c="orange"><p class="card-quote"><span class="card-lead">I gave because</span> my garden made more tomatoes than two people can eat.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Nov 14</span></div></article>
+
+            <article class="card" data-c="purple"><p class="card-quote"><span class="card-lead">Tomé algo porque</span> no me alcanzó hasta el viernes y no quería pedirle a nadie.</p><div class="card-meta"><span class="card-type">took <span class="card-lang">es</span></span><span class="card-date">Nov 12</span></div></article>
+
+            <article class="card" data-c="red"><span class="card-daisy"><svg width="26" height="26" viewBox="0 0 100 100"><g fill="#e2434a"><ellipse cx="50" cy="20" rx="11" ry="20"/><ellipse cx="50" cy="80" rx="11" ry="20"/><ellipse cx="20" cy="50" rx="20" ry="11"/><ellipse cx="80" cy="50" rx="20" ry="11"/></g><circle cx="50" cy="50" r="13" fill="#ffd63c"/></svg></span><p class="card-quote"><span class="card-lead">I gave because</span> I walk past this box every day and finally stopped.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Nov 11</span></div></article>
+
+            <article class="card" data-c="green"><p class="card-quote"><span class="card-lead">I took because</span> I'm okay, just stretched thin until Friday.</p><div class="card-meta"><span class="card-type">took</span><span class="card-date">Nov 9</span></div></article>
+
+            <article class="card" data-c="pink"><p class="card-quote"><span class="card-lead">I gave because</span> my mother passed in March and she would have wanted the cans used.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Nov 8</span></div></article>
+
+            <article class="card" data-c="teal"><p class="card-quote"><span class="card-lead">I took because</span> I lost hours at work this week.</p><div class="card-meta"><span class="card-type">took</span><span class="card-date">Nov 6</span></div></article>
+
+            <article class="card" data-c="orange"><p class="card-quote"><span class="card-lead">I gave because</span> my kids wanted to pick what went in. They chose the cereal.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Nov 5</span></div></article>
+
+            <article class="card" data-c="blue"><p class="card-quote"><span class="card-lead">I took because</span> the shelter kitchen is closed on Sundays.</p><div class="card-meta"><span class="card-type">took</span><span class="card-date">Nov 3</span></div></article>
+
+            <article class="card" data-c="yellow"><p class="card-quote"><span class="card-lead">I gave because</span> the pantry was empty when I drove past and that bothered me all day.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Oct 30</span></div></article>
+
+            <article class="card" data-c="green"><p class="card-quote"><span class="card-lead">I took because</span> my hours got cut and I have two weeks to cover.</p><div class="card-meta"><span class="card-type">took</span><span class="card-date">Oct 28</span></div></article>
+
+            <article class="card" data-c="purple"><p class="card-quote"><span class="card-lead">I gave because</span> my daughter asked why the box was there and I didn't have a good answer for doing nothing.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Oct 25</span></div></article>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label"><span>Screen 1</span><em>The board</em></div>
+  </div>
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="board">
+        <div class="board-inner">
+          <div class="thanks">
+            <span class="daisy" style="top:18px; left:18px;"><svg width="40" height="40" viewBox="0 0 100 100"><g fill="#56b25a"><ellipse cx="50" cy="20" rx="11" ry="20"/><ellipse cx="50" cy="80" rx="11" ry="20"/><ellipse cx="20" cy="50" rx="20" ry="11"/><ellipse cx="80" cy="50" rx="20" ry="11"/><ellipse cx="28" cy="28" rx="11" ry="20" transform="rotate(-45 28 28)"/><ellipse cx="72" cy="28" rx="11" ry="20" transform="rotate(45 72 28)"/><ellipse cx="28" cy="72" rx="11" ry="20" transform="rotate(45 28 72)"/><ellipse cx="72" cy="72" rx="11" ry="20" transform="rotate(-45 72 72)"/></g><circle cx="50" cy="50" r="13" fill="#ffd63c"/></svg></span>
+            <span class="daisy" style="top:52px; right:22px;"><svg width="28" height="28" viewBox="0 0 100 100"><g fill="#35aed0"><ellipse cx="50" cy="20" rx="11" ry="20"/><ellipse cx="50" cy="80" rx="11" ry="20"/><ellipse cx="20" cy="50" rx="20" ry="11"/><ellipse cx="80" cy="50" rx="20" ry="11"/></g><circle cx="50" cy="50" r="13" fill="#ffd63c"/></svg></span>
+
+            <h1 class="thanks-mark">Thank <span>you</span>.</h1>
+            <p class="thanks-sub">This is yours. It goes up on the board soon.</p>
+
+            <article class="card" data-c="orange">
+              <span class="card-daisy"><svg width="26" height="26" viewBox="0 0 100 100"><g fill="#f1892f"><ellipse cx="50" cy="20" rx="11" ry="20"/><ellipse cx="50" cy="80" rx="11" ry="20"/><ellipse cx="20" cy="50" rx="20" ry="11"/><ellipse cx="80" cy="50" rx="20" ry="11"/></g><circle cx="50" cy="50" r="13" fill="#ffd63c"/></svg></span>
+              <p class="card-quote"><span class="card-lead">I gave because</span> my garden made more tomatoes than two people can eat.</p>
+              <div class="card-meta"><span class="card-type">gave</span><span class="card-date">Today</span></div>
+            </article>
+
+            <p class="thanks-promise">That card is <b>everything we kept</b> — your words and today's date. We never asked for your name, and we didn't record your device, your location, or anything else.</p>
+
+            <a class="cta" href="#">See what others wrote →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label"><span>Screen 2</span><em>After submitting</em></div>
+  </div>
+
+</div>
+
+<!-- ═════════ DESKTOP ═════════ -->
+<div class="note">
+  <div class="tag">Desktop</div>
+  <h2>Prompt stays put, two columns</h2>
+  <p>The hand-lettered prompt is painted on the wall, so it doesn't scroll — pinned left at full height while
+     cards go past it. The blank stays in front of you the whole time you're reading other people's answers
+     to it, which is the thing I wanted to keep from the Chang reference.</p>
+  <p><b>Two columns, not four.</b> At dozens of responses a year, four columns would have left most of the
+     screen empty. Two keeps the wall looking tended. It's a one-line change when the board outgrows it.</p>
+</div>
+<div class="board d-board">
+  <aside class="panel">
+    <nav class="nav"><a href="#" aria-current="page">The board</a><a href="#">Find the pantry</a><a href="#">About</a></nav>
+    <header class="prompt">
+      <div class="prompt-kicker">Ferdon Avenue · Little Free Pantry</div>
+      <h1 class="prompt-line"><span class="ltr">B</span><span class="ltr">E</span><span class="ltr">C</span><span class="ltr">A</span><span class="ltr">U</span><span class="ltr">S</span><span class="ltr">E</span><span class="prompt-blank"></span></h1>
+      <p class="prompt-sub">Every card is someone who stopped at our box. <b>No names, no accounts, no tracking</b> — we keep the words and the date, and nothing else.</p>
+    </header>
+    <div class="controls">
+      <button class="chip" aria-pressed="true">All</button>
+      <button class="chip" aria-pressed="false">Gave</button>
+      <button class="chip" aria-pressed="false">Took</button>
+      <button class="shuffle">⤮ Shuffle</button>
+    </div>
+  </aside>
+
+  <div class="cards">
+    <article class="card" data-c="pink"><span class="card-daisy"><svg width="28" height="28" viewBox="0 0 100 100"><g fill="#ea69a4"><ellipse cx="50" cy="20" rx="11" ry="20"/><ellipse cx="50" cy="80" rx="11" ry="20"/><ellipse cx="20" cy="50" rx="20" ry="11"/><ellipse cx="80" cy="50" rx="20" ry="11"/></g><circle cx="50" cy="50" r="13" fill="#ffd63c"/></svg></span><p class="card-quote"><span class="card-lead">I gave because</span> I had extra rice and nowhere to put it.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Nov 18</span></div></article>
+    <article class="card" data-c="teal"><p class="card-quote"><span class="card-lead">I took because</span> it's between paychecks. My kid eats first.</p><div class="card-meta"><span class="card-type">took</span><span class="card-date">Nov 18</span></div></article>
+    <article class="card" data-c="yellow"><p class="card-quote"><span class="card-lead">I gave because</span> someone did this for me once.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Nov 16</span></div></article>
+    <article class="card" data-c="blue"><p class="card-quote"><span class="card-lead">I took because</span> a car repair ate the grocery money this month.</p><div class="card-meta"><span class="card-type">took</span><span class="card-date">Nov 15</span></div></article>
+    <article class="card" data-c="orange"><p class="card-quote"><span class="card-lead">I gave because</span> my garden made more tomatoes than two people can eat.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Nov 14</span></div></article>
+    <article class="card" data-c="purple"><p class="card-quote"><span class="card-lead">Tomé algo porque</span> no me alcanzó hasta el viernes y no quería pedirle a nadie.</p><div class="card-meta"><span class="card-type">took <span class="card-lang">es</span></span><span class="card-date">Nov 12</span></div></article>
+    <article class="card" data-c="red"><span class="card-daisy"><svg width="28" height="28" viewBox="0 0 100 100"><g fill="#e2434a"><ellipse cx="50" cy="20" rx="11" ry="20"/><ellipse cx="50" cy="80" rx="11" ry="20"/><ellipse cx="20" cy="50" rx="20" ry="11"/><ellipse cx="80" cy="50" rx="20" ry="11"/></g><circle cx="50" cy="50" r="13" fill="#ffd63c"/></svg></span><p class="card-quote"><span class="card-lead">I gave because</span> I walk past this box every day and finally stopped.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Nov 11</span></div></article>
+    <article class="card" data-c="green"><p class="card-quote"><span class="card-lead">I took because</span> I'm okay, just stretched thin until Friday.</p><div class="card-meta"><span class="card-type">took</span><span class="card-date">Nov 9</span></div></article>
+    <article class="card" data-c="pink"><p class="card-quote"><span class="card-lead">I gave because</span> my mother passed in March and she would have wanted the cans used.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Nov 8</span></div></article>
+    <article class="card" data-c="teal"><p class="card-quote"><span class="card-lead">I took because</span> I lost hours at work this week.</p><div class="card-meta"><span class="card-type">took</span><span class="card-date">Nov 6</span></div></article>
+    <article class="card" data-c="orange"><p class="card-quote"><span class="card-lead">I gave because</span> my kids wanted to pick what went in. They chose the cereal.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Nov 5</span></div></article>
+    <article class="card" data-c="blue"><p class="card-quote"><span class="card-lead">I took because</span> the shelter kitchen is closed on Sundays.</p><div class="card-meta"><span class="card-type">took</span><span class="card-date">Nov 3</span></div></article>
+    <article class="card" data-c="yellow"><p class="card-quote"><span class="card-lead">I gave because</span> the pantry was empty when I drove past and that bothered me all day.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Oct 30</span></div></article>
+    <article class="card" data-c="green"><p class="card-quote"><span class="card-lead">I took because</span> my hours got cut and I have two weeks to cover.</p><div class="card-meta"><span class="card-type">took</span><span class="card-date">Oct 28</span></div></article>
+    <article class="card" data-c="purple"><p class="card-quote"><span class="card-lead">I gave because</span> my daughter asked why the box was there and I didn't have a good answer for doing nothing.</p><div class="card-meta"><span class="card-type">gave</span><span class="card-date">Oct 25</span></div></article>
+  </div>
+</div>
+
+</body>
+</html>
